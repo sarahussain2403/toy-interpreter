@@ -1,7 +1,9 @@
 package interpreter;
 
+import interpreter.view.View;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Toy interpreter works");
+        new View().run();
     }
 }

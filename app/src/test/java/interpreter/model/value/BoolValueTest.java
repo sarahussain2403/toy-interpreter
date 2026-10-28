@@ -2,7 +2,6 @@ package interpreter.model.value;
 
 import interpreter.model.type.BoolType;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 class BoolValueTest {
     @Test

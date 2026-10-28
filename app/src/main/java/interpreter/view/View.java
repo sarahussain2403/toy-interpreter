@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class View {
     private final Scanner scanner = new Scanner(System.in);
-    private final IStmt[] programs = {Examples.EX1, Examples.EX2, Examples.EX3};
+    private final IStmt[] programs = {Examples.EX1, Examples.EX2, Examples.EX3, Examples.EX4};
     private int selected = -1;
 
     public void run() {
@@ -51,17 +51,14 @@ public class View {
         System.out.print("Program number: ");
         String text = scanner.nextLine().trim();
 
-        if (text.equals("1")) {
-            selected = 0;
-        } else if (text.equals("2")) {
-            selected = 1;
-        } else if (text.equals("3")) {
-            selected = 2;
-        } else {
-            System.out.println("There is no such program.");
-            return;
+        for (int i = 0; i < programs.length; i++) {
+            if (text.equals(String.valueOf(i + 1))) {
+                selected = i;
+                System.out.println("Program " + text + " selected.");
+                return;
+            }
         }
-        System.out.println("Program " + text + " selected.");
+        System.out.println("There is no such program.");
     }
 
     private void runSelectedProgram() {

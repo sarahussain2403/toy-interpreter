@@ -2,7 +2,6 @@ package interpreter.model.type;
 
 import interpreter.model.value.BoolValue;
 import interpreter.model.value.IValue;
-
 public record BoolType() implements IType {
     @Override
     public IValue defaultValue() {

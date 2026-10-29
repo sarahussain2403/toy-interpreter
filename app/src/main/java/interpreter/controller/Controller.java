@@ -14,7 +14,6 @@ public class Controller {
         this.repo = repo;
         this.displayFlag = displayFlag;
     }
-
     public PrgState oneStep(PrgState state) throws MyException {
         var stack = state.getExeStack();
         if (stack.isEmpty()) {
@@ -23,7 +22,6 @@ public class Controller {
         IStmt crtStmt = stack.pop();
         return crtStmt.execute(state);
     }
-
     public void allStep() throws MyException {
         PrgState prg = repo.getCrtPrg();
         display(prg);
@@ -32,7 +30,6 @@ public class Controller {
             display(prg);
         }
     }
-
     private void display(PrgState state) {
         if (displayFlag) {
             System.out.println(state);

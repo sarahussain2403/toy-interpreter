@@ -4,12 +4,7 @@ import interpreter.model.exp.ArithExp;
 import interpreter.model.exp.ArithOp;
 import interpreter.model.exp.ValueExp;
 import interpreter.model.exp.VarExp;
-import interpreter.model.stmt.AssignStmt;
-import interpreter.model.stmt.CompStmt;
-import interpreter.model.stmt.IStmt;
-import interpreter.model.stmt.IfStmt;
-import interpreter.model.stmt.PrintStmt;
-import interpreter.model.stmt.VarDeclStmt;
+import interpreter.model.stmt.*;
 import interpreter.model.type.BoolType;
 import interpreter.model.type.IntType;
 import interpreter.model.value.BoolValue;
@@ -50,13 +45,11 @@ public class Examples {
                             new CompStmt(
                                     new IfStmt(new VarExp("a"),
                                             new AssignStmt("v", new ValueExp(new IntValue(2))),
-                                            new AssignStmt("v", new ValueExp(new IntValue(3)))),
+                                            new NopStmt()),
                                     new PrintStmt(new VarExp("v"))))));
     public static final IStmt EX4 = new CompStmt(
             new VarDeclStmt("v", new IntType()),
             new CompStmt(
                     new AssignStmt("v", new ArithExp(ArithOp.DIV,
-                            new ValueExp(new IntValue(5)),new ValueExp(new IntValue(0)))),
-                    new PrintStmt(new VarExp("v"))));
-
-}
+                            new ValueExp(new IntValue(5)), new ValueExp(new IntValue(0)))),
+                    new PrintStmt(new VarExp("v"))));}

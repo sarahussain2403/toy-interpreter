@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class View {
     private final Scanner scanner = new Scanner(System.in);
-    private final IStmt[] programs = {Examples.EX1, Examples.EX2, Examples.EX3, Examples.EX4};
+    private final IStmt[] programs = {Examples.EX1, Examples.EX2, Examples.EX3, Examples.EX4,Examples.EX5};
     private int selected = -1;
 
     public void run() {

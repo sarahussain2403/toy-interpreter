@@ -1,5 +1,6 @@
 package interpreter.controller;
 
+import interpreter.exceptions.ExpressionException;
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -49,12 +50,24 @@ class ControllerTest {
         assertEquals(new IntValue(2), state.getOut().get(0));
     }
 
+
     @Test
     void oneStepOnEmptyStackThrows() throws MyException {
         PrgState state = run(new NopStmt());
         Controller controller = new Controller(new Repository(state), false);
         var ex = assertThrows(StatementException.class, () -> controller.oneStep(state));
         assertEquals("program state stack is empty", ex.getMessage());
+    }
+    @Test
+    void example4DivisionByZeroStopsTheProgram() {
+        var ex = assertThrows(ExpressionException.class, () -> run(Examples.EX4));
+        assertEquals("division by zero", ex.getMessage());
+    }
+    @Test
+    void example5AssigningIntToBoolThrows() {
+        var ex = assertThrows(StatementException.class, () -> run(Examples.EX5));
+        assertEquals("declared type of variable a and type of the assigned expression do not match",
+                ex.getMessage());
     }
 
     @Test

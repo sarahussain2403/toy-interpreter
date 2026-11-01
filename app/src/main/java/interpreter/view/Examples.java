@@ -52,4 +52,10 @@ public class Examples {
             new CompStmt(
                     new AssignStmt("v", new ArithExp(ArithOp.DIV,
                             new ValueExp(new IntValue(5)), new ValueExp(new IntValue(0)))),
-                    new PrintStmt(new VarExp("v"))));}
+                    new PrintStmt(new VarExp("v"))));
+    public static final IStmt EX5 = new CompStmt(
+            new VarDeclStmt("a", new BoolType()),
+            new CompStmt(
+                    new AssignStmt("a", new ValueExp(new IntValue(2))),
+                    new PrintStmt(new VarExp("a"))));
+}

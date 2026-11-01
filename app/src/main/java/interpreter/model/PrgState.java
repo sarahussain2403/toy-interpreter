@@ -28,7 +28,6 @@ public class PrgState {
     public void setExeStack(IStack<IStmt> exeStack) {
         this.exeStack = exeStack;
     }
-
     public IDictionary<String, IValue> getSymTable() {
         return symTable;
     }
@@ -48,6 +47,7 @@ public class PrgState {
     public IStmt getOriginalProgram() {
         return originalProgram;
     }
+
 
     @Override
     public String toString() {

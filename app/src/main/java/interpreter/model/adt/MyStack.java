@@ -4,6 +4,7 @@ import interpreter.exceptions.ADTException;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 
 public class MyStack<T> implements IStack<T> {
     private final Deque<T> stack = new ArrayDeque<>();
@@ -19,6 +20,10 @@ public class MyStack<T> implements IStack<T> {
             throw new ADTException("pop from an empty stack");
         }
         return stack.pop();
+    }
+    @Override
+    public List<T> toList() {
+        return List.copyOf(stack);
     }
 
     @Override

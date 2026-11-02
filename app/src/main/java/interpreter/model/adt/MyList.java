@@ -20,6 +20,10 @@ public class MyList<T> implements IList<T> {
         }
         return list.get(index);
     }
+    @Override
+    public List<T> toList() {
+        return List.copyOf(list);
+    }
 
     @Override
     public int size() {

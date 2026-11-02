@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class NopStmtTest {
     @Test
     void nopLeavesTheStateUnchanged() throws MyException {
-        PrgState state = new PrgState(new MyStack<>(), new MyDictionary<>(), new MyList<>(), new NopStmt());
+        PrgState state = PrgState.of(new NopStmt());
         state.getExeStack().pop();
 
         PrgState result = new NopStmt().execute(state);

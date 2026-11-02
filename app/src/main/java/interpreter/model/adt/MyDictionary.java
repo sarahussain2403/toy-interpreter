@@ -33,6 +33,18 @@ public class MyDictionary<K, V> implements IDictionary<K, V> {
         }
         map.put(key, value);
     }
+    @Override
+    public void remove(K key) throws ADTException {
+        if (!map.containsKey(key)) {
+            throw new ADTException("key " + key + " is not defined");
+        }
+        map.remove(key);
+    }
+
+    @Override
+    public Map<K, V> toMap() {
+        return Map.copyOf(map);
+    }
 
     @Override
     public String toString() {

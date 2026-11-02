@@ -40,7 +40,6 @@ class FileStmtTest {
 
     @AfterEach
     void closeFilesLeftOpen() throws Exception {
-        // Windows cannot delete a file that is still open
         for (BufferedReader r : state.getFileTable().toMap().values()) r.close();
     }
 

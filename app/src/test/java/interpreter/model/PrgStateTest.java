@@ -3,6 +3,7 @@ package interpreter.model;
 import interpreter.exceptions.MyException;
 import interpreter.model.stmt.IStmt;
 import interpreter.model.stmt.NopStmt;
+import interpreter.model.value.IntValue;
 import interpreter.model.value.StringValue;
 import org.junit.jupiter.api.Test;
 
@@ -33,5 +34,17 @@ class PrgStateTest {
 
         assertTrue(state.getFileTable().isDefined(new StringValue("f")));
         assertFalse(state.getFileTable().isDefined(new StringValue("g")));
+    }
+
+    @Test
+    void toLogStringHasTheFourSectionsWithOneElementPerLine() throws MyException {
+        PrgState state = PrgState.of(new NopStmt());
+        state.getSymTable().put("x", new IntValue(5));
+        state.getOut().add(new IntValue(5));
+        state.getFileTable().put(new StringValue("f.in"),
+                new BufferedReader(new StringReader("")));
+
+        assertEquals("ExeStack:\nnop\nSymTable:\nx --> 5\nOut:\n5\nFileTable:\nf.in\n",
+                state.toLogString());
     }
 }

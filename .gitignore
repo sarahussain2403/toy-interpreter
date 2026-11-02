@@ -43,6 +43,9 @@ bin/
 .DS_Store
 .idea/
 *.iml
+
+
 out/
 .vscode/
 .DS_Store
+log*.txt

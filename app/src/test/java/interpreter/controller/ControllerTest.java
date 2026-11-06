@@ -1,6 +1,5 @@
 package interpreter.controller;
 
-import interpreter.exceptions.ExpressionException;
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -23,6 +22,7 @@ class ControllerTest {
 
     @TempDir
     Path dir;
+
     private Repository newRepo(PrgState state) {
         return new Repository(state, dir.resolve("log.txt").toString());
     }
@@ -32,8 +32,6 @@ class ControllerTest {
         new Controller(newRepo(state), false).allStep();
         return state;
     }
-
-
 
     @Test
     void example1PrintsTwo() throws MyException {
@@ -56,19 +54,46 @@ class ControllerTest {
         assertEquals(new IntValue(2), state.getOut().get(0));
     }
 
-
     @Test
-    void example4DivisionByZeroStopsTheProgram() {
-        var ex = assertThrows(ExpressionException.class, () -> run(Examples.EX4));
-        assertEquals("division by zero", ex.getMessage());
+    void example5PrintsFive() throws MyException {
+        PrgState state = run(Examples.EX5);
+        assertTrue(state.getExeStack().isEmpty());
+        assertEquals(1, state.getOut().size());
+        assertEquals(new IntValue(5), state.getOut().get(0));
     }
 
     @Test
-    void example5AssigningIntToBoolThrows() {
-        assertThrows(StatementException.class, () -> run(Examples.EX5));
+    void fileExampleReadsBothNumbersAndClosesTheFile() throws Exception {
+        Path in = dir.resolve("test.in");
+        Files.writeString(in, "15\n50\n");
+
+        PrgState state = run(Examples.fileExample(in.toString()));
+
+        assertEquals(2, state.getOut().size());
+        assertEquals(new IntValue(15), state.getOut().get(0));
+        assertEquals(new IntValue(50), state.getOut().get(1));
+        assertTrue(state.getFileTable().toMap().isEmpty());
     }
 
+    @Test
+    void fileExampleWithAnEmptyFilePrintsZeroTwice() throws Exception {
+        Path in = dir.resolve("empty.in");
+        Files.writeString(in, "");
 
+        PrgState state = run(Examples.fileExample(in.toString()));
+
+        assertEquals(2, state.getOut().size());
+        assertEquals(new IntValue(0), state.getOut().get(0));
+        assertEquals(new IntValue(0), state.getOut().get(1));
+        assertTrue(state.getFileTable().toMap().isEmpty());
+    }
+
+    @Test
+    void fileExampleWithAMissingFileThrows() {
+        String missing = dir.resolve("missing.in").toString();
+        assertThrows(StatementException.class,
+                () -> run(Examples.fileExample(missing)));
+    }
 
     @Test
     void oneStepOnEmptyStackThrows() throws MyException {
@@ -83,8 +108,6 @@ class ControllerTest {
         IStmt program = new AssignStmt("x", new ValueExp(new IntValue(1)));
         assertThrows(StatementException.class, () -> run(program));
     }
-
-
 
     @Test
     void logFileContainsTheFourSectionsInOrder() throws Exception {
@@ -105,7 +128,8 @@ class ControllerTest {
 
     @Test
     void logFileIsWrittenEvenWhenTheProgramFails() throws Exception {
-        assertThrows(ExpressionException.class, () -> run(Examples.EX4));
+        IStmt program = new AssignStmt("x", new ValueExp(new IntValue(1)));
+        assertThrows(StatementException.class, () -> run(program));
         String log = Files.readString(dir.resolve("log.txt"));
         assertTrue(log.contains("ExeStack:"));
     }

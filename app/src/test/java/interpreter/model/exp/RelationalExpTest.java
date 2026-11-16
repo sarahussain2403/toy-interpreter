@@ -9,12 +9,15 @@ import interpreter.model.value.IValue;
 import interpreter.model.value.IntValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import interpreter.model.adt.IHeap;
+import interpreter.model.adt.MyHeap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RelationalExpTest {
 
     private IDictionary<String, IValue> symTable;
+    private final IHeap heap = new MyHeap();
 
     @BeforeEach
     void setUp() {
@@ -26,7 +29,7 @@ class RelationalExpTest {
     }
 
     private IValue eval(RelOp op, int a, int b) throws MyException {
-        return new RelationalExp(op, num(a), num(b)).eval(symTable);
+        return new RelationalExp(op, num(a), num(b)).eval(symTable, heap);
     }
 
     @Test
@@ -69,14 +72,14 @@ class RelationalExpTest {
     void worksWithVariables() throws MyException {
         symTable.put("a", new IntValue(5));
         IExp exp = new RelationalExp(RelOp.LT, new VarExp("a"), num(7));
-        assertEquals(new BoolValue(true), exp.eval(symTable));
+        assertEquals(new BoolValue(true), exp.eval(symTable, heap));
     }
 
     @Test
     void nonIntegerFirstOperandThrows() {
         IExp exp = new RelationalExp(RelOp.LT,
                 new ValueExp(new BoolValue(true)), num(1));
-        var ex = assertThrows(ExpressionException.class, () -> exp.eval(symTable));
+        var ex = assertThrows(ExpressionException.class, () -> exp.eval(symTable, heap));
         assertEquals("first operand is not an integer", ex.getMessage());
     }
 
@@ -84,7 +87,7 @@ class RelationalExpTest {
     void nonIntegerSecondOperandThrows() {
         IExp exp = new RelationalExp(RelOp.LT,
                 num(1), new ValueExp(new BoolValue(true)));
-        var ex = assertThrows(ExpressionException.class, () -> exp.eval(symTable));
+        var ex = assertThrows(ExpressionException.class, () -> exp.eval(symTable, heap));
         assertEquals("second operand is not an integer", ex.getMessage());
     }
 

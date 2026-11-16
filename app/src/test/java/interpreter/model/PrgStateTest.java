@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +25,7 @@ class PrgStateTest {
         assertTrue(state.getSymTable().toMap().isEmpty());
         assertEquals(0, state.getOut().size());
         assertTrue(state.getFileTable().toMap().isEmpty());
+        assertTrue(state.getHeap().getContent().isEmpty());
     }
 
     @Test
@@ -37,14 +39,32 @@ class PrgStateTest {
     }
 
     @Test
-    void toLogStringHasTheFourSectionsWithOneElementPerLine() throws MyException {
+    void toLogStringHasTheFiveSectionsWithOneElementPerLine() throws MyException {
         PrgState state = PrgState.of(new NopStmt());
         state.getSymTable().put("x", new IntValue(5));
         state.getOut().add(new IntValue(5));
         state.getFileTable().put(new StringValue("f.in"),
                 new BufferedReader(new StringReader("")));
+        state.getHeap().allocate(new IntValue(20));
 
-        assertEquals("ExeStack:\nnop\nSymTable:\nx --> 5\nOut:\n5\nFileTable:\nf.in\n",
-                state.toLogString());
+        assertEquals("ExeStack:\nnop\nSymTable:\nx --> 5\nOut:\n5\nFileTable:\nf.in\n"
+                + "Heap:\n1 --> 20\n", state.toLogString());
+    }
+
+    @Test
+    void theHeapSectionOfTheLogIsSortedByAddress() {
+        PrgState state = PrgState.of(new NopStmt());
+        state.getHeap().setContent(Map.of(
+                3, new IntValue(30), 1, new IntValue(10), 2, new IntValue(20)));
+
+        String log = state.toLogString();
+
+        assertTrue(log.endsWith("Heap:\n1 --> 10\n2 --> 20\n3 --> 30\n"));
+    }
+
+    @Test
+    void anEmptyHeapGivesAnEmptyHeapSection() {
+        PrgState state = PrgState.of(new NopStmt());
+        assertTrue(state.toLogString().endsWith("FileTable:\nHeap:\n"));
     }
 }

@@ -7,21 +7,24 @@ import interpreter.model.adt.MyDictionary;
 import interpreter.model.value.IValue;
 import interpreter.model.value.IntValue;
 import org.junit.jupiter.api.Test;
+import interpreter.model.adt.IHeap;
+import interpreter.model.adt.MyHeap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class VarExpTest {
     private final IDictionary<String, IValue> symTable = new MyDictionary<>();
+    private final IHeap heap = new MyHeap();
 
     @Test
     void returnsTheValueOfADefinedVariable() throws MyException {
         symTable.put("a", new IntValue(2));
-        assertEquals(new IntValue(2), new VarExp("a").eval(symTable));
+        assertEquals(new IntValue(2), new VarExp("a").eval(symTable,heap));
     }
 
     @Test
     void undefinedVariableThrows() {
-        var ex = assertThrows(ExpressionException.class, () -> new VarExp("x").eval(symTable));
+        var ex = assertThrows(ExpressionException.class, () -> new VarExp("x").eval(symTable,heap));
         assertEquals("variable x is not defined", ex.getMessage());
     }
 }

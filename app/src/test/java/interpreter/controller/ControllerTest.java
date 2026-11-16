@@ -12,6 +12,7 @@ import interpreter.repository.Repository;
 import interpreter.view.Examples;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import interpreter.model.value.BoolValue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,6 +61,16 @@ class ControllerTest {
         assertTrue(state.getExeStack().isEmpty());
         assertEquals(1, state.getOut().size());
         assertEquals(new IntValue(5), state.getOut().get(0));
+    }
+    @Test
+    void example6PrintsTrueBecauseOneIsNotTwo() throws MyException {
+        PrgState state = run(Examples.EX6);
+        assertTrue(state.getExeStack().isEmpty());
+        assertEquals(1, state.getOut().size());
+        assertEquals(new BoolValue(true), state.getOut().get(0));
+        assertEquals(new IntValue(1), state.getSymTable().lookup("a"));
+        assertEquals(new IntValue(2), state.getSymTable().lookup("b"));
+        assertEquals(new BoolValue(true), state.getSymTable().lookup("c"));
     }
 
     @Test

@@ -3,26 +3,32 @@ package interpreter.controller;
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
+import interpreter.model.exp.RelOp;
+import interpreter.model.exp.RelationalExp;
 import interpreter.model.exp.ValueExp;
+import interpreter.model.exp.VarExp;
 import interpreter.model.stmt.AssignStmt;
+import interpreter.model.stmt.CompStmt;
 import interpreter.model.stmt.IStmt;
+import interpreter.model.stmt.NewStmt;
 import interpreter.model.stmt.NopStmt;
+import interpreter.model.stmt.PrintStmt;
+import interpreter.model.stmt.VarDeclStmt;
+import interpreter.model.type.BoolType;
+import interpreter.model.type.IntType;
+import interpreter.model.type.RefType;
+import interpreter.model.value.BoolValue;
 import interpreter.model.value.IntValue;
+import interpreter.model.value.RefValue;
 import interpreter.repository.Repository;
 import interpreter.view.Examples;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import interpreter.model.value.BoolValue;
-import interpreter.model.stmt.CompStmt;
-import interpreter.model.stmt.NewStmt;
-import interpreter.model.stmt.VarDeclStmt;
-import interpreter.model.type.IntType;
-import interpreter.model.type.RefType;
-import java.util.List;
-import java.util.Map;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,15 +75,73 @@ class ControllerTest {
         assertEquals(1, state.getOut().size());
         assertEquals(new IntValue(5), state.getOut().get(0));
     }
+
     @Test
-    void example6PrintsTrueBecauseOneIsNotTwo() throws MyException {
-        PrgState state = run(Examples.EX6);
+    void notEqualsExampleFromA3PrintsTrue() throws MyException {
+        IStmt program = new CompStmt(
+                new VarDeclStmt("a", new IntType()),
+                new CompStmt(
+                        new VarDeclStmt("b", new IntType()),
+                        new CompStmt(
+                                new VarDeclStmt("c", new BoolType()),
+                                new CompStmt(
+                                        new AssignStmt("a", new ValueExp(new IntValue(1))),
+                                        new CompStmt(
+                                                new AssignStmt("b", new ValueExp(new IntValue(2))),
+                                                new CompStmt(
+                                                        new AssignStmt("c",
+                                                                new RelationalExp(RelOp.NE,
+                                                                        new VarExp("a"),
+                                                                        new VarExp("b"))),
+                                                        new PrintStmt(new VarExp("c"))))))));
+
+        PrgState state = run(program);
+
         assertTrue(state.getExeStack().isEmpty());
         assertEquals(1, state.getOut().size());
         assertEquals(new BoolValue(true), state.getOut().get(0));
         assertEquals(new IntValue(1), state.getSymTable().lookup("a"));
         assertEquals(new IntValue(2), state.getSymTable().lookup("b"));
         assertEquals(new BoolValue(true), state.getSymTable().lookup("c"));
+    }
+
+    @Test
+    void example6PrintsTheTwoReferences() throws MyException {
+        PrgState state = run(Examples.EX6);
+
+        assertEquals(2, state.getOut().size());
+        RefValue v = assertInstanceOf(RefValue.class, state.getOut().get(0));
+        RefValue a = assertInstanceOf(RefValue.class, state.getOut().get(1));
+        assertEquals(1, v.address());
+        assertEquals(new IntType(), v.locationType());
+        assertEquals(2, a.address());
+        assertEquals(new RefType(new IntType()), a.locationType());
+        assertEquals(new IntValue(20), state.getHeap().getContent().get(1));
+        assertEquals(v, state.getHeap().getContent().get(2));
+    }
+
+    @Test
+    void example7PrintsTwentyAndTwentyFive() throws MyException {
+        PrgState state = run(Examples.EX7);
+
+        assertEquals(List.of(new IntValue(20), new IntValue(25)), state.getOut().toList());
+    }
+
+    @Test
+    void example8WritesThirtyIntoTheHeap() throws MyException {
+        PrgState state = run(Examples.EX8);
+
+        assertEquals(List.of(new IntValue(20), new IntValue(35)), state.getOut().toList());
+        assertEquals(Map.of(1, new IntValue(30)), state.getHeap().getContent());
+    }
+
+    @Test
+    void example10CountsDownFromFourToZero() throws MyException {
+        PrgState state = run(Examples.EX10);
+
+        assertEquals(List.of(new IntValue(4), new IntValue(3), new IntValue(2),
+                new IntValue(1), new IntValue(0)), state.getOut().toList());
+        assertEquals(new IntValue(0), state.getSymTable().lookup("v"));
     }
 
     @Test
@@ -151,6 +215,7 @@ class ControllerTest {
         String log = Files.readString(dir.resolve("log.txt"));
         assertTrue(log.contains("ExeStack:"));
     }
+
     @Test
     void example9PrintsTwentyBecauseTheGarbageCollectorIsSafe() throws MyException {
         PrgState state = run(Examples.EX9);

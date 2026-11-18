@@ -1,26 +1,15 @@
 package interpreter.view;
 
-import interpreter.model.exp.ArithExp;
-import interpreter.model.exp.ArithOp;
-import interpreter.model.exp.RelOp;
-import interpreter.model.exp.RelationalExp;
-import interpreter.model.exp.ValueExp;
-import interpreter.model.exp.VarExp;
-import interpreter.model.stmt.AssignStmt;
-import interpreter.model.stmt.CloseRFileStmt;
-import interpreter.model.stmt.CompStmt;
-import interpreter.model.stmt.IStmt;
-import interpreter.model.stmt.IfStmt;
-import interpreter.model.stmt.OpenRFileStmt;
-import interpreter.model.stmt.PrintStmt;
-import interpreter.model.stmt.ReadFileStmt;
-import interpreter.model.stmt.VarDeclStmt;
+import interpreter.model.exp.*;
+import interpreter.model.stmt.*;
 import interpreter.model.type.BoolType;
 import interpreter.model.type.IntType;
+import interpreter.model.type.RefType;
 import interpreter.model.type.StringType;
 import interpreter.model.value.BoolValue;
 import interpreter.model.value.IntValue;
 import interpreter.model.value.StringValue;
+import interpreter.model.stmt.NewStmt;
 
 public class Examples {
 
@@ -102,4 +91,15 @@ public class Examples {
                                                                     new VarExp("a"),
                                                                     new VarExp("b"))),
                                                     new PrintStmt(new VarExp("c"))))))));
+    public static final IStmt EX9 = new CompStmt(
+            new VarDeclStmt("v", new RefType(new IntType())),
+            new CompStmt(
+                    new NewStmt("v", new ValueExp(new IntValue(20))),
+                    new CompStmt(
+                            new VarDeclStmt("a", new RefType(new RefType(new IntType()))),
+                            new CompStmt(
+                                    new NewStmt("a", new VarExp("v")),
+                                    new CompStmt(
+                                            new NewStmt("v", new ValueExp(new IntValue(30))),
+                                            new PrintStmt(new ReadHeapExp(new ReadHeapExp(new VarExp("a")))))))));
 }

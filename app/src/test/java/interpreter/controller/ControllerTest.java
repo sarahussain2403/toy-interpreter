@@ -13,6 +13,13 @@ import interpreter.view.Examples;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import interpreter.model.value.BoolValue;
+import interpreter.model.stmt.CompStmt;
+import interpreter.model.stmt.NewStmt;
+import interpreter.model.stmt.VarDeclStmt;
+import interpreter.model.type.IntType;
+import interpreter.model.type.RefType;
+import java.util.List;
+import java.util.Map;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -130,11 +137,11 @@ class ControllerTest {
     }
 
     @Test
-    void logFileHasOneBlockForTheStartAndOneForEachStep() throws Exception {
+    void logFileHasABlockForTheStartAndTwoForEachStep() throws Exception {
         run(Examples.EX1);
         String log = Files.readString(dir.resolve("log.txt"));
         int blocks = log.split("ExeStack:", -1).length - 1;
-        assertEquals(6, blocks);
+        assertEquals(11, blocks);
     }
 
     @Test
@@ -143,5 +150,24 @@ class ControllerTest {
         assertThrows(StatementException.class, () -> run(program));
         String log = Files.readString(dir.resolve("log.txt"));
         assertTrue(log.contains("ExeStack:"));
+    }
+    @Test
+    void example9PrintsTwentyBecauseTheGarbageCollectorIsSafe() throws MyException {
+        PrgState state = run(Examples.EX9);
+
+        assertEquals(List.of(new IntValue(20)), state.getOut().toList());
+    }
+
+    @Test
+    void theControllerRemovesLocationsNobodyCanReach() throws MyException {
+        IStmt program = new CompStmt(
+                new VarDeclStmt("v", new RefType(new IntType())),
+                new CompStmt(
+                        new NewStmt("v", new ValueExp(new IntValue(20))),
+                        new NewStmt("v", new ValueExp(new IntValue(30)))));
+
+        PrgState state = run(program);
+
+        assertEquals(Map.of(2, new IntValue(30)), state.getHeap().getContent());
     }
 }

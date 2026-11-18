@@ -29,10 +29,13 @@ public class Controller {
         display(prg);
         while (!prg.getExeStack().isEmpty()) {
             oneStep(prg);
-            repo.logPrgStateExec();        
+            repo.logPrgStateExec();
+            prg.getHeap().setContent(GarbageCollector.safeGarbageCollector(
+                    GarbageCollector.getAddrFromSymTable(prg.getSymTable().toMap().values()),
+                    prg.getHeap().getContent()));
+            repo.logPrgStateExec();
             display(prg);
-        }
-    }
+        }}
     private void display(PrgState state) {
         if (displayFlag) {
             System.out.println(state);

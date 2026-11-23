@@ -1,5 +1,7 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -9,7 +11,7 @@ import interpreter.model.value.IValue;
 
 public record IfStmt(IExp cond, IStmt thenS, IStmt elseS) implements IStmt {
     @Override
-    public PrgState execute(PrgState state) throws MyException {
+    public Optional<PrgState> execute(PrgState state) throws MyException {
         IValue c = cond.eval(state.getSymTable(), state.getHeap());
         if (!(c instanceof BoolValue(boolean b))) {
             throw new StatementException("condition is not a boolean");
@@ -19,7 +21,7 @@ public record IfStmt(IExp cond, IStmt thenS, IStmt elseS) implements IStmt {
         } else {
             state.getExeStack().push(elseS);
         }
-        return state;
+        return Optional.empty();
     }
 
     @Override

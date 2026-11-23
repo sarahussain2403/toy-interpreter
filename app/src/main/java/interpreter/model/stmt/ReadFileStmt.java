@@ -1,5 +1,7 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -14,7 +16,7 @@ import java.io.IOException;
 public record ReadFileStmt(IExp exp, String varName) implements IStmt {
 
     @Override
-    public PrgState execute(PrgState state) throws MyException {
+    public Optional<PrgState> execute(PrgState state) throws MyException {
         var symTable = state.getSymTable();
 
         if (!symTable.isDefined(varName))
@@ -41,7 +43,7 @@ public record ReadFileStmt(IExp exp, String varName) implements IStmt {
             throw new StatementException("readFile: the line read from " + fileName
                     + " is not an integer");
         }
-        return state;
+        return Optional.empty();
     }
 
     @Override

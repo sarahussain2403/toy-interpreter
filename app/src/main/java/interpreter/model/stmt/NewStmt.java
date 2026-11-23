@@ -1,5 +1,7 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -10,7 +12,7 @@ import interpreter.model.value.RefValue;
 public record NewStmt(String varName, IExp exp) implements IStmt {
 
     @Override
-    public PrgState execute(PrgState state) throws MyException {
+    public Optional<PrgState> execute(PrgState state) throws MyException {
         var symTable = state.getSymTable();
         if (!symTable.isDefined(varName))
             throw new StatementException("new: " + varName + " is not declared");
@@ -24,7 +26,7 @@ public record NewStmt(String varName, IExp exp) implements IStmt {
 
         int address = state.getHeap().allocate(value);
         symTable.update(varName, new RefValue(address, ref.locationType()));
-        return state;
+        return Optional.empty();
     }
 
     @Override

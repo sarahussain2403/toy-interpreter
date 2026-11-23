@@ -1,5 +1,7 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -10,7 +12,7 @@ import interpreter.model.value.RefValue;
 public record WriteHeapStmt(String varName, IExp exp) implements IStmt {
 
     @Override
-    public PrgState execute(PrgState state) throws MyException {
+    public Optional<PrgState> execute(PrgState state) throws MyException {
         var symTable = state.getSymTable();
         var heap = state.getHeap();
 
@@ -27,7 +29,7 @@ public record WriteHeapStmt(String varName, IExp exp) implements IStmt {
                     + ", expected " + ref.locationType());
 
         heap.update(ref.address(), value);
-        return state;
+        return Optional.empty();
     }
 
     @Override

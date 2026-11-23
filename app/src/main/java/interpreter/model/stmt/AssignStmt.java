@@ -1,5 +1,7 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -8,7 +10,7 @@ import interpreter.model.value.IValue;
 
 public record AssignStmt(String id, IExp exp) implements IStmt {
     @Override
-    public PrgState execute(PrgState state) throws MyException {
+    public Optional<PrgState> execute(PrgState state) throws MyException {
         var symTable = state.getSymTable();
         if (!symTable.isDefined(id)) {
             throw new StatementException("variable " + id + " was not declared");
@@ -19,7 +21,7 @@ public record AssignStmt(String id, IExp exp) implements IStmt {
                     + " and type of the assigned expression do not match");
         }
         symTable.update(id, val);
-        return state;
+        return Optional.empty();
     }
 
     @Override

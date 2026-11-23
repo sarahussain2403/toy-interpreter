@@ -1,5 +1,7 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -13,7 +15,7 @@ import java.io.IOException;
 public record OpenRFileStmt(IExp exp) implements IStmt {
 
     @Override
-    public PrgState execute(PrgState state) throws MyException {
+    public Optional<PrgState> execute(PrgState state) throws MyException {
         if (!(exp.eval(state.getSymTable(), state.getHeap()) instanceof StringValue fileName))
             throw new StatementException("openRFile: " + exp + " is not a string");
 
@@ -28,7 +30,7 @@ public record OpenRFileStmt(IExp exp) implements IStmt {
             throw new StatementException("openRFile: cannot open " + fileName
                     + ": " + e.getMessage());
         }
-        return state;
+        return Optional.empty();
     }
 
     @Override

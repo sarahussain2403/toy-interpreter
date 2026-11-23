@@ -21,7 +21,8 @@ public class Controller {
             throw new StatementException("program state stack is empty");
         }
         IStmt crtStmt = stack.pop();
-        return crtStmt.execute(state);
+        crtStmt.execute(state);
+        return state;
     }
     public void allStep() throws MyException {
         PrgState prg = repo.getCrtPrg();

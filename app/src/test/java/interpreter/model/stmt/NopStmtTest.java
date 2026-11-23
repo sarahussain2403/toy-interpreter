@@ -2,10 +2,9 @@ package interpreter.model.stmt;
 
 import interpreter.exceptions.MyException;
 import interpreter.model.PrgState;
-import interpreter.model.adt.MyDictionary;
-import interpreter.model.adt.MyList;
-import interpreter.model.adt.MyStack;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,9 +14,9 @@ class NopStmtTest {
         PrgState state = PrgState.of(new NopStmt());
         state.getExeStack().pop();
 
-        PrgState result = new NopStmt().execute(state);
+        Optional<PrgState> result = new NopStmt().execute(state);
 
-        assertSame(state, result);
+        assertTrue(result.isEmpty());
         assertTrue(state.getExeStack().isEmpty());
         assertEquals(0, state.getOut().size());
         assertFalse(state.getSymTable().isDefined("x"));

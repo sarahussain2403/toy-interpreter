@@ -1,5 +1,7 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.exceptions.MyException;
 import interpreter.exceptions.StatementException;
 import interpreter.model.PrgState;
@@ -10,7 +12,7 @@ import interpreter.model.value.IValue;
 public record WhileStmt(IExp cond, IStmt body) implements IStmt {
 
     @Override
-    public PrgState execute(PrgState state) throws MyException {
+    public Optional<PrgState> execute(PrgState state) throws MyException {
         IValue value = cond.eval(state.getSymTable(), state.getHeap());
         if (!(value instanceof BoolValue(boolean condition)))
             throw new StatementException("condition " + cond + " is not a boolean");
@@ -19,7 +21,7 @@ public record WhileStmt(IExp cond, IStmt body) implements IStmt {
             state.getExeStack().push(this);
             state.getExeStack().push(body);
         }
-        return state;
+        return Optional.empty();
     }
 
     @Override

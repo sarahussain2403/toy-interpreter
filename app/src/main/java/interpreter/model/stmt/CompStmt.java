@@ -1,13 +1,15 @@
 package interpreter.model.stmt;
 
+import java.util.Optional;
+
 import interpreter.model.PrgState;
 
 public record CompStmt(IStmt first, IStmt second) implements IStmt {
     @Override
-    public PrgState execute(PrgState state) {
+    public Optional<PrgState> execute(PrgState state) {
         state.getExeStack().push(second);
         state.getExeStack().push(first);
-        return state;
+        return Optional.empty();
     }
 
     @Override
